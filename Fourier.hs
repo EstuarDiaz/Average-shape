@@ -1,6 +1,6 @@
 module Fourier where
 
-import Data.Complex (Complex(..), magnitude, cis, mkPolar)
+import Data.Complex (Complex(..), cis)
 import Data.List (iterate')
 
 type Time = Float
@@ -46,9 +46,10 @@ integrate :: ComplexFunction -> Time -> Time -> Complex Value
 integrate f a b = 
   let
     n = 100 :: Int
-    dt = (b - a) / (fromIntegral n - 1)
-  in 
-    sum . map (eval f) . take n $ iterate' (+dt) a
+    dt = (b - a) / fromIntegral n
+    interval = take n $ iterate' (+dt) a
+  in
+    (* (dt :+ 0)) . sum . map (eval f) $ interval
 
 fourierTransform :: ComplexFunction -> FourierSeries
 fourierTransform f = 
@@ -61,10 +62,12 @@ fourierTransform f =
     map coefficient [-center .. center]
 
 inverseFT :: FourierSeries -> ComplexFunction
-inverseFT coefficients = Function $
-  \t -> sum $ zipWith
-            (\ ck k -> ck * cis (fromIntegral k * t))
-            coefficients [- center .. center]
+inverseFT coefficients = 
+  Function $
+    \t -> (/(2 * pi)). sum $ 
+        zipWith
+          (\ ck k -> ck * cis (fromIntegral k * t))
+          coefficients [- center .. center]
 
 
 instance Num FourierSeries where
