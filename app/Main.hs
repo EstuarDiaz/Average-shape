@@ -1,4 +1,4 @@
-import Function ( eval )
+import Function (eval)
 import Fourier (ComplexFunction, inverseFT, averageFS, fourierTransform)
 
 main :: IO ()

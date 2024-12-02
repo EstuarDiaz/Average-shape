@@ -1,5 +1,6 @@
-module Fourier
-  (ComplexFunction, fourierTransform, inverseFT, averageFS) where
+{-# LANGUAGE TypeSynonymInstances, FlexibleInstances, InstanceSigs #-}
+
+module Fourier where
 
 import Data.Complex (Complex(..), cis, magnitude, phase)
 import Data.List (iterate', tails)
@@ -44,10 +45,10 @@ instance Num FourierSeries where
 
   abs, signum :: FourierSeries -> FourierSeries
   abs = map (realToFrac. magnitude)
-  signum = map (realToFrac. phase)
+  signum = map (cis. phase)
 
   fromInteger :: Integer -> FourierSeries
   fromInteger n = replicate center 0 ++ [fromInteger n] ++ replicate center 0
 
-averageFS :: Foldable t => t FourierSeries -> FourierSeries
+averageFS :: [FourierSeries] -> FourierSeries
 averageFS xs = map (/ fromIntegral (length xs)) $ sum xs
