@@ -9,7 +9,7 @@ import Codec.Picture
 max_iterations :: Int
 max_iterations = 100
 precission :: Int
-precission = 3
+precission = 5
 
 center :: (Int, Int)
 center = (50, 50)
@@ -17,12 +17,13 @@ color :: PixelRGB8
 color = PixelRGB8 0 0 0
 bg_color :: PixelRGB8
 bg_color = PixelRGB8 255 255 255
+type Contour = [(Int, Int)]
 
 type PixelMask = Int -> Int -> Bool
 
 generateShape :: PixelMask -> String -> IO ()
 generateShape mask path = writePng path $ generateImage pixelRenderer 100 100
-   where pixelRenderer x y = if mask x y then color else bg_color
+   where pixelRenderer x y = if mask x y then PixelRGB8 255 0 0 else bg_color
 
 square :: Int -> PixelMask
 square r x y = 
@@ -78,7 +79,7 @@ findContour img color bg_color point = findContour' 1 starting_point
          in
             fromMaybe (x,y) next_pixel
 
-contour :: String -> IO ([(Int, Int)])
+contour :: String -> IO (Contour)
 contour filePath = do
   x <- readImage filePath
   let img = convertRGB8 . fromRight undefined $ x

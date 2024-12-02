@@ -78,4 +78,5 @@ executable Average-shape
     -- Base language which the package is written in.
     default-language: Haskell2010
 
-    other-modules: Function, Fourier, Contour
+    other-modules: 
+        Function, Fourier, Contour, ContourToFunction

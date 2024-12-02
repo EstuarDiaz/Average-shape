@@ -52,3 +52,6 @@ instance Num FourierSeries where
 
 averageFS :: [FourierSeries] -> FourierSeries
 averageFS xs = map (/ fromIntegral (length xs)) $ sum xs
+
+averageShape :: [ComplexFunction] -> ComplexFunction
+averageShape = inverseFT . averageFS . map fourierTransform
