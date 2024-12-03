@@ -2,3 +2,4 @@
 dist-newstyle/**
 CHANGELOG.md
 **.png
+.DS_Store

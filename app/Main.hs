@@ -6,6 +6,18 @@ import ContourToFunction
 
 main :: IO ()
 main = do
-  imgs <- mapM contour ["square.png", "circle.png"]
+  perimeter <- contour "italy.png"
+  generateShape 350 350 (scatter perimeter) "perimeterItaly.png"
+  let perimeter' = toContour . toFunction $ perimeter
+  generateShape 350 350 (scatter perimeter') "italyPlot.png"
+
+  perimeter <- contour "germany.png"
+  generateShape 350 350 (scatter perimeter) "perimeterGermany.png"
+  let perimeter' = toContour . toFunction $ perimeter
+  generateShape 350 350 (scatter perimeter') "germanyPlot.png"
+  
+  --
+  
+  imgs <- mapM contour ["italy.png", "germany.png"]
   let averagePerimeter = toContour . averageShape . map toFunction $ imgs
-  generateShape (scatter averagePerimeter) "averagePerimeter.png"
+  generateShape 350 350 (scatter averagePerimeter) "averagePerimeter.png"

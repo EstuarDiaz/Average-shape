@@ -10,7 +10,7 @@ import Function (Function(Function), eval, integrate)
 type Time   = Float
 type Value  = Float
 center :: Int
-center = 10
+center = 40
 
 type ComplexFunction = Function Time (Complex Value)
 type FourierSeries = [Complex Value]

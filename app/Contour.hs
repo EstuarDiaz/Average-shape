@@ -7,23 +7,30 @@ import Data.Either (fromRight)
 import Codec.Picture
 
 max_iterations :: Int
-max_iterations = 100
+max_iterations = 2000
 precission :: Int
-precission = 5
+precission = 1
 
 center :: (Int, Int)
-center = (50, 50)
-color :: PixelRGB8
+center = (206, 180)
+color, bg_color, renderColor :: PixelRGB8
 color = PixelRGB8 0 0 0
-bg_color :: PixelRGB8
 bg_color = PixelRGB8 255 255 255
+renderColor = PixelRGB8 0 0 0
+
 type Contour = [(Int, Int)]
 
 type PixelMask = Int -> Int -> Bool
 
-generateShape :: PixelMask -> String -> IO ()
-generateShape mask path = writePng path $ generateImage pixelRenderer 100 100
-   where pixelRenderer x y = if mask x y then PixelRGB8 255 0 0 else bg_color
+isInside :: PixelRGB8 -> Bool
+isInside (PixelRGB8 r g b) = r + g + b < 50
+
+isOutside :: PixelRGB8 -> Bool
+isOutside = not . isInside
+
+generateShape :: Int -> Int -> PixelMask -> String -> IO ()
+generateShape w h mask path = writePng path $ generateImage pixelRenderer w h
+   where pixelRenderer x y = if mask x y then bg_color else renderColor
 
 square :: Int -> PixelMask
 square r x y = 
@@ -46,13 +53,13 @@ imageCreator path = writePng path $ generateImage pixelRenderer 250 300
 isCloseTo :: (Int, Int) -> (Int, Int) -> Bool
 isCloseTo (x,y) (z,w) = abs (x - z) + abs (y - w) < precission
 
-findContour :: Pixel a => Image a -> a -> a -> (Int, Int) -> [(Int, Int)]
+findContour :: Image PixelRGB8 -> PixelRGB8 -> PixelRGB8 -> (Int, Int) -> [(Int, Int)]
 findContour img color bg_color point = findContour' 1 starting_point
    where 
       starting_point = findFirstEdge point
 
       findFirstEdge :: (Int, Int) -> (Int, Int)
-      findFirstEdge (x, y) = if pixelAt img (x+1) y == bg_color 
+      findFirstEdge (x, y) = if isOutside $ pixelAt img (x+1) y
                            then (x, y)
                            else findFirstEdge (x + 1, y)
 
@@ -69,12 +76,13 @@ findContour img color bg_color point = findContour' 1 starting_point
       findNextPointClockwise (x,y) =
          let
             d = precission -- maskSize
-            nbhd =      [(x + i, y + d) | i <- [-d .. d]] 
+            nbhd = reverse $     
+                        [(x + i, y + d) | i <- [-d .. d]] 
                      ++ [(x + d, y + i) | i <- [d, d - 1 .. -d]]  
                      ++ [(x + i, y - d) | i <- [d, d - 1 .. - d]]
                      ++ [(x - d, y + i) | i <- [-d .. d]]
 
-            edgeIn (a,b) (w,z) = (pixelAt img a b == color) && (pixelAt img w z == bg_color)
+            edgeIn (a,b) (w,z) = (isInside $ pixelAt img a b) && (isOutside $ pixelAt img w z)
             next_pixel = fst <$> find (uncurry edgeIn)  (zip (cycle $ drop 1 nbhd) nbhd)
          in
             fromMaybe (x,y) next_pixel
@@ -83,4 +91,5 @@ contour :: String -> IO (Contour)
 contour filePath = do
   x <- readImage filePath
   let img = convertRGB8 . fromRight undefined $ x
-  return $ findContour img color bg_color center
+  let img_center = (imageWidth img `div` 2, imageHeight img `div` 2)
+  return $ findContour img color bg_color img_center

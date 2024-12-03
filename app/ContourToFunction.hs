@@ -7,7 +7,7 @@ import Function (Function(..), eval)
 import Fourier (Time, Value, ComplexFunction)
 
 epsilon :: Float
-epsilon = 0.1
+epsilon = 0.01
 
 toFunction :: Contour -> ComplexFunction
 toFunction xs = Function f

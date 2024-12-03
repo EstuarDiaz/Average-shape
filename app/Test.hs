@@ -15,21 +15,19 @@ testComplexFunction = do
 testImageGenerator :: IO ()
 testImageGenerator = do
   imageCreator "test.png"
-  generateShape (square 25) "square.png"
-  generateShape (circle 25) "circle.png"
+  generateShape 100 100 (square 25) "square.png"
+  generateShape 100 100 (circle 25) "circle.png"
   
 testPerimeter :: IO ()
 testPerimeter = do
   perimeter <- contour "circle.png"
   print perimeter
-  generateShape (scatter perimeter) "perimeter.png"
+  generateShape 100 100 (scatter perimeter) "perimeter.png"
   let perimeter' = toContour . toFunction $ perimeter
-  generateShape (scatter perimeter') "perimeter2.png"
+  generateShape 100 100 (scatter perimeter') "perimeter2.png"
 
 testAveragePerimeter :: IO ()
 testAveragePerimeter = do
-  perimeter <- contour "circle.png"
-  generateShape (scatter perimeter) "circlePerimeter.png"
-  
-  perimeter' <- contour "square.png"
-  generateShape (scatter perimeter') "squarePerimeter.png"
+  imgs <- mapM contour ["square.png", "circle.png"]
+  let averagePerimeter = toContour . averageShape . map toFunction $ imgs
+  generateShape 100 100 (scatter averagePerimeter) "averagePerimeter.png"
