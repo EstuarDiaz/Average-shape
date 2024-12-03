@@ -31,3 +31,9 @@ testAveragePerimeter = do
   imgs <- mapM contour ["square.png", "circle.png"]
   let averagePerimeter = toContour . averageShape . map toFunction $ imgs
   generateShape 100 100 (scatter averagePerimeter) "averagePerimeter.png"
+
+testAverageContour :: IO ()
+testAverageContour = do
+  imgs <- mapM contour ["italy.png", "germany.png"]
+  let averagePerimeter = toContour . averageShape . map toFunction $ imgs
+  generateShape 350 350 (scatter averagePerimeter) "averagePerimeter.png"
