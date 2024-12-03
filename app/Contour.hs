@@ -32,6 +32,10 @@ generateShape :: Int -> Int -> PixelMask -> String -> IO ()
 generateShape w h mask path = writePng path $ generateImage pixelRenderer w h
    where pixelRenderer x y = if mask x y then bg_color else renderColor
 
+imageCreator :: Int -> Int -> PixelMask -> Image PixelRGB8
+imageCreator w h mask = generateImage pixelRenderer w h
+   where pixelRenderer x y = if mask x y then bg_color else renderColor
+
 square :: Int -> PixelMask
 square r x y = 
    let 
@@ -45,10 +49,6 @@ circle r x y = let (x', y') = center in (x - x')^2 + (y - y')^2 < r^2
 
 scatter :: [(Int, Int)] -> PixelMask
 scatter xs x y = (x,y) `elem` xs
-
-imageCreator :: String -> IO ()
-imageCreator path = writePng path $ generateImage pixelRenderer 250 300
-   where pixelRenderer x y = PixelRGB8 (fromIntegral x) (fromIntegral y) 128
 
 isCloseTo :: (Int, Int) -> (Int, Int) -> Bool
 isCloseTo (x,y) (z,w) = abs (x - z) + abs (y - w) < precission

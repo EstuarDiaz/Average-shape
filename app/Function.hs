@@ -1,4 +1,4 @@
-module Function (Function(Function), eval, integrate) where
+module Function (Function(Function), eval, integrate, scale) where
 
 import Data.List (iterate')
 
@@ -32,3 +32,6 @@ integrate f a b n =
     interval = take n $ iterate' (+dt) a
   in
     (* realToFrac dt) . sum . map (eval f) $ interval
+
+scale :: Num b => b -> Function a b -> Function a b
+scale c f = (pure c) * f

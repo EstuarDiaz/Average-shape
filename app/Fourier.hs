@@ -5,7 +5,7 @@ module Fourier where
 import Data.Complex (Complex(..), cis, magnitude, phase)
 import Data.List (iterate', tails)
 
-import Function (Function(Function), eval, integrate)
+import Function (Function(Function), eval, integrate, scale)
 
 type Time   = Float
 type Value  = Float
@@ -55,3 +55,12 @@ averageFS xs = map (/ fromIntegral (length xs)) $ sum xs
 
 averageShape :: [ComplexFunction] -> ComplexFunction
 averageShape = inverseFT . averageFS . map fourierTransform
+
+averageFSWeighted :: [FourierSeries] -> [FourierSeries]
+averageFSWeighted (f : rest@(g : _)) = 
+  [zipWith (\x y -> c * x + (1 - c) * y) f g | i <- [0, 0.05 .. 1], let c = i :+ 0] 
+    ++ averageFSWeighted rest
+averageFSWeighted _ = []
+
+averageShapeWeighted :: [ComplexFunction] -> [ComplexFunction]
+averageShapeWeighted = map inverseFT . averageFSWeighted . map fourierTransform
