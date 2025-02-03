@@ -6,6 +6,7 @@
 **Method:** represent the contour of the countries using Fourier analysis and then do the average.
 
 Let $f:\mathbb{R} \to \mathbb{C}$ be a complex valued periodic function, with period $2 \pi$. We can represent $f$ as a Fourier Series, given by 
+
 $$
   f(t) = \frac{1}{2\pi}\sum\limits_{k=-\infty}^\infty c_k\cdot \exp{(k \cdot i t)}
 $$
