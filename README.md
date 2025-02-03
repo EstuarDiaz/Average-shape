@@ -1,5 +1,9 @@
 # Average-shape
-Goal: find the average shape of all the countries. Method: represent the contour of the countries using Fourier analysis and then do the average.
+**Goal:** find the average shape of two countries. 
+
+![](https://github.com/EstuarDiaz/Average-shape/blob/main/transition.gif)
+
+**Method:** represent the contour of the countries using Fourier analysis and then do the average.
 
 Let $f:\mathbb{R} \to \mathbb{C}$ be a complex valued periodic function, with period $2 \pi$. We can represent $f$ as a Fourier Series, given by 
 $$
